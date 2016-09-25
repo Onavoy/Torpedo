@@ -8,6 +8,9 @@ open class Context: NSObject {
     
     public override init() {
         super.init()
+        #if os(iOS)
+            UIKitTorpedoContext.configure()
+        #endif
         self.register(property: FileManager.default.urls(for :.documentDirectory, in : .userDomainMask).first! as AnyObject, withKey: "DocumentsDirectory")
     }
     
