@@ -14,7 +14,7 @@ open class Context: NSObject {
         self.register(property: FileManager.default.urls(for :.documentDirectory, in : .userDomainMask).first! as AnyObject, withKey: "DocumentsDirectory")
     }
     
-    open func get<T>(_ type: T.Type) -> T? {
+    open func get<T>(_ type: T.Type) -> T! {
         for obj in dependencies {
             if let objT = obj as? T {
                 return objT
