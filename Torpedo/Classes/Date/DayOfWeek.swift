@@ -1,6 +1,6 @@
 import Foundation
 
-enum DayOfWeek: String {
+public enum DayOfWeek: String {
     case Sun = "Sun"
     case Mon = "Mon"
     case Tue = "Tue"
@@ -31,7 +31,7 @@ enum DayOfWeek: String {
     static let allValues = [Sun,Mon,Tue,Wed,Thu,Fri,Sat]
 }
 
-extension Date {
+public extension Date {
     func dayOfWeek() -> DayOfWeek {
         let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         let weekday = (calendar as NSCalendar).component(.weekday, from: self)

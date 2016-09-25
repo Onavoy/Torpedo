@@ -10,7 +10,7 @@ open class BoolSet {
     open static let trueFalseSet = BoolSet(trueString: "True", falseString: "False")
     open static let allSets: [BoolSet] = [yesNoSet, yNSet, oneZeroSet, trueFalseSet]
 
-    init(trueString: String, falseString: String) {
+    public init(trueString: String, falseString: String) {
         self.trueString = trueString
         self.falseString = falseString;
     }

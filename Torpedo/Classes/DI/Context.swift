@@ -1,17 +1,17 @@
 import Foundation
 
-public class Context: NSObject {
+open class Context: NSObject {
     
     private var dependencies: [AnyObject] = []
     private var properties: [String:AnyObject] = [:]
     private var isActive: Bool = false
     
-    override init() {
+    public override init() {
         super.init()
         self.register(property: FileManager.default.urls(for :.documentDirectory, in : .userDomainMask).first! as AnyObject, withKey: "DocumentsDirectory")
     }
     
-    public func get<T>(_ type: T.Type) -> T? {
+    open func get<T>(_ type: T.Type) -> T? {
         for obj in dependencies {
             if let objT = obj as? T {
                 return objT
@@ -20,7 +20,7 @@ public class Context: NSObject {
         return nil
     }
     
-    public func getAll<T>(_ type: T.Type) -> [T] {
+    open func getAll<T>(_ type: T.Type) -> [T] {
         var result :[T] = []
         for obj in dependencies {
             if let objT = obj as? T {
@@ -30,7 +30,7 @@ public class Context: NSObject {
         return result
     }
     
-    public func get(withClass aClass: AnyClass) -> AnyObject? {
+    open func get(withClass aClass: AnyClass) -> AnyObject? {
         for dependency in dependencies {
             if dependency.isKind(of: aClass) {
                 return dependency
@@ -39,7 +39,7 @@ public class Context: NSObject {
         return nil
     }
     
-    public func getAll(withClass aClass: AnyClass) -> [AnyObject] {
+    open func getAll(withClass aClass: AnyClass) -> [AnyObject] {
         var result :[AnyObject] = []
         for dependency in dependencies {
             if dependency.isKind(of: aClass) {
@@ -49,18 +49,18 @@ public class Context: NSObject {
         return result
     }
     
-    public func getProperty<T>(key: String, type: T.Type) -> T? {
+    open func getProperty<T>(key: String, type: T.Type) -> T? {
         if let foundProperty = properties[key.uppercased()] as? T {
             return foundProperty
         }
         return nil
     }
     
-    public func getProperty(key: String) -> AnyObject? {
+    open func getProperty(key: String) -> AnyObject? {
         return properties[key.uppercased()]
     }
     
-    public func activate() {
+    open func activate() {
         guard !isActive else {
             print("WARNING: Context already activated")
             return
@@ -70,37 +70,37 @@ public class Context: NSObject {
         resolveDependenciesDependencies()
     }
     
-    public func register(_ object: AnyObject) {
+    open func register(_ object: AnyObject) {
         dependencies.append(object)
         if isActive {
             resolveDependencies(object)
         }
     }
     
-    public func register(objects: [AnyObject]) {
+    open func register(objects: [AnyObject]) {
         dependencies.append(contentsOf: objects)
         if isActive {
             resolveDependencies(objects: objects)
         }
     }
     
-    public func register(property: AnyObject, withKey key: String) {
+    open func register(property: AnyObject, withKey key: String) {
         properties[key.uppercased()] = property
     }
     
-    public func resolveDependencies(objects: [AnyObject]) {
+    open func resolveDependencies(objects: [AnyObject]) {
         for dependent in objects {
             resolveDependencies(dependent)
         }
     }
     
-    public func instance(of aClass: AnyClass) -> AnyObject {
+    open func instance(of aClass: AnyClass) -> AnyObject {
         let obj = RuntimeUtils.instance(of: aClass)
         resolveDependencies(obj)
         return obj
     }
     
-    public func resolveDependencies(_ object: AnyObject) {
+    open func resolveDependencies(_ object: AnyObject) {
         let allProperties = ClassPropertiesUtil.generate(forClass: object_getClass(object))
         
         getDependencyProperties(allProperties).forEach { (aProperty) in
@@ -120,7 +120,7 @@ public class Context: NSObject {
         }
     }
     
-    public func clone() -> Context {
+    open func clone() -> Context {
         let cloneContext = Context()
         cloneContext.dependencies = dependencies
         cloneContext.properties = properties
