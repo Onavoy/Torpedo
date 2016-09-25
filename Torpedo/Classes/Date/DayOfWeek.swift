@@ -9,7 +9,7 @@ public enum DayOfWeek: String {
     case Fri = "Fri"
     case Sat = "Sat"
     
-    var fullName: String {
+    public var fullName: String {
         switch (self) {
         case .Sun:
             return "Sunday"
@@ -28,11 +28,11 @@ public enum DayOfWeek: String {
         }
     }
     
-    static let allValues = [Sun,Mon,Tue,Wed,Thu,Fri,Sat]
+    public static let allValues = [Sun,Mon,Tue,Wed,Thu,Fri,Sat]
 }
 
 public extension Date {
-    func dayOfWeek() -> DayOfWeek {
+    public func dayOfWeek() -> DayOfWeek {
         let calendar = Calendar(identifier: Calendar.Identifier.gregorian)
         let weekday = (calendar as NSCalendar).component(.weekday, from: self)
         switch weekday {
