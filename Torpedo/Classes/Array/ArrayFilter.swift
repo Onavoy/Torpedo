@@ -12,7 +12,7 @@ public extension Array {
         return result;
     }
 
-    public func filterElementsNotWithType<T>(_ type: T.Type) -> [Element] {
+    public func filterNot<T>(withType type: T.Type) -> [Element] {
         var result: [Element] = []
         for element in self {
             if let _ = element as? T {
