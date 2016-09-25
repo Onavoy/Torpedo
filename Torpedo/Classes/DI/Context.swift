@@ -42,6 +42,15 @@ open class Context: NSObject {
         return nil
     }
     
+    open func get(withProtocol aProtocol: Protocol) -> AnyObject? {
+        for dependency in dependencies {
+            if dependency.conforms(to: aProtocol) {
+                return dependency
+            }
+        }
+        return nil
+    }
+    
     open func getAll(withClass aClass: AnyClass) -> [AnyObject] {
         var result :[AnyObject] = []
         for dependency in dependencies {
@@ -155,11 +164,20 @@ open class Context: NSObject {
     }
     
     private func satisfyDependency(_ aProperty: ClassProperty, forDependent dependent: AnyObject) {
-        if let dependency = get(withClass: aProperty.objectClass!) {
-            dependent.setValue(dependency, forKeyPath: aProperty.name)
-        } else {
-            print("ERROR: could not satisfy \(aProperty.name) for \(aProperty.sourceClass)")
+        if let theClass = aProperty.objectClass {
+            if let dependency = get(withClass: theClass) {
+                dependent.setValue(dependency, forKeyPath: aProperty.name)
+                return
+            }
+        } else if let protocolName = aProperty.protocols?.first {
+            if let theProtocol = NSProtocolFromString(protocolName) {
+                if let theConformer = get(withProtocol: theProtocol) {
+                    dependent.setValue(theConformer, forKeyPath: aProperty.name)
+                    return
+                }
+            }
         }
+        print("ERROR: could not satisfy \(aProperty.name) for \(aProperty.sourceClass)")
     }
     
     private func satisfyProperty(_ aProperty: ClassProperty, forDependent dependent: AnyObject) {
