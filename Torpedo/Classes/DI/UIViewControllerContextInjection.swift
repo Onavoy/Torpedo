@@ -1,24 +1,27 @@
 #if os(iOS)
     
+    
     import UIKit
+    
+    public class UIKitTorpedoContext {
+        public static func configure() {
+            UIViewController.context_vc_configure()
+            UINavigationController.context_nc_configure()
+            UIStoryboard.context_sb_configure()
+        }
+    }
     
     
     public extension UIViewController {
         
         private static var isFinishedSwizzling = false
+        
         private struct AssociatedKeys {
             static var Context = "d_context"
             static var ContextPropertiesInjected = "d_contextPropertiesInjected"
         }
         
-        
-        open override class func initialize() {
-            
-            // make sure this isn't a subclass
-            guard self == UIViewController.self else {
-                return
-            }
-            
+        public static func context_vc_configure() {
             if !isFinishedSwizzling {
                 isFinishedSwizzling = true
                 MethodSwizzler.swizzleSelectorsInClass(self, originalSelector:
@@ -128,7 +131,7 @@
         
         private static var isFinishedSwizzling = false
         
-        open override class func initialize() {
+        public static func context_sb_configure() {
             if !isFinishedSwizzling {
                 isFinishedSwizzling = true
                 MethodSwizzler.swizzleSelectorsInClass(self, originalSelector:
@@ -180,8 +183,7 @@
         
         private static var isFinishedSwizzling = false
         
-        open override class func initialize() {
-            
+        public static func context_nc_configure() {
             if !isFinishedSwizzling {
                 isFinishedSwizzling = true
                 MethodSwizzler.swizzleSelectorsInClass(self, originalSelector:
@@ -197,4 +199,3 @@
     }
     
 #endif
-
