@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D56662D41D9A305E0037E2CA /* Closures.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56662D31D9A305E0037E2CA /* Closures.swift */; };
 		D587C6AE1D975AB000A7308D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D587C6AD1D975AB000A7308D /* AppDelegate.swift */; };
 		D587C6B01D975AB000A7308D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D587C6AF1D975AB000A7308D /* ViewController.swift */; };
 		D587C6B31D975AB000A7308D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D587C6B11D975AB000A7308D /* Main.storyboard */; };
@@ -35,6 +36,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D56662D31D9A305E0037E2CA /* Closures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Closures.swift; sourceTree = "<group>"; };
 		D587C6AA1D975AB000A7308D /* Torpedo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Torpedo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D587C6AD1D975AB000A7308D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D587C6AF1D975AB000A7308D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -173,6 +175,7 @@
 				D587C6D41D975B4200A7308D /* ClassProperty.swift */,
 				D587C6D51D975B4200A7308D /* MethodSwizzler.swift */,
 				D587C6D61D975B4200A7308D /* RuntimeUtils.swift */,
+				D56662D31D9A305E0037E2CA /* Closures.swift */,
 			);
 			path = Runtime;
 			sourceTree = "<group>";
@@ -270,6 +273,7 @@
 			files = (
 				D587C6ED1D975B4200A7308D /* StringManipulate.swift in Sources */,
 				D587C6E81D975B4200A7308D /* ClassProperty.swift in Sources */,
+				D56662D41D9A305E0037E2CA /* Closures.swift in Sources */,
 				D587C6DE1D975B4200A7308D /* ArraySort.swift in Sources */,
 				D587C6E31D975B4200A7308D /* DayOfWeek.swift in Sources */,
 				D587C6EA1D975B4200A7308D /* RuntimeUtils.swift in Sources */,
