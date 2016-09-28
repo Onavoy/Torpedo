@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D53BE2781D9BB669009B3A1F /* DoubleUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53BE2771D9BB669009B3A1F /* DoubleUtils.swift */; };
 		D56662D41D9A305E0037E2CA /* Closures.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56662D31D9A305E0037E2CA /* Closures.swift */; };
 		D587C6AE1D975AB000A7308D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D587C6AD1D975AB000A7308D /* AppDelegate.swift */; };
 		D587C6B01D975AB000A7308D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D587C6AF1D975AB000A7308D /* ViewController.swift */; };
@@ -36,6 +37,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		D53BE2771D9BB669009B3A1F /* DoubleUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleUtils.swift; sourceTree = "<group>"; };
 		D56662D31D9A305E0037E2CA /* Closures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Closures.swift; sourceTree = "<group>"; };
 		D587C6AA1D975AB000A7308D /* Torpedo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Torpedo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D587C6AD1D975AB000A7308D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 			isa = PBXGroup;
 			children = (
 				D587C6D11D975B4200A7308D /* IntExtension.swift */,
+				D53BE2771D9BB669009B3A1F /* DoubleUtils.swift */,
 			);
 			path = Numbers;
 			sourceTree = "<group>";
@@ -271,6 +274,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D53BE2781D9BB669009B3A1F /* DoubleUtils.swift in Sources */,
 				D587C6ED1D975B4200A7308D /* StringManipulate.swift in Sources */,
 				D587C6E81D975B4200A7308D /* ClassProperty.swift in Sources */,
 				D56662D41D9A305E0037E2CA /* Closures.swift in Sources */,

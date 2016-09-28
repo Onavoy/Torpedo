@@ -110,7 +110,7 @@
         }
         
         fileprivate func context_injectPropertiesIfNotYet(_ viewController: UIViewController) {
-            if !viewController.isInjectionComplete {
+            if !viewController.isInjectionComplete && d_context != nil {
                 d_context?.resolveDependencies(viewController)
                 let children = viewController.childViewControllers
                 context_injectPropertiesForMany(children)

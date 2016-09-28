@@ -1,9 +1,13 @@
 import Foundation
 
+public protocol Dependent: class {
+    func resolveDependencies(context: Context)
+}
+
 open class Context: NSObject {
     
-    private var dependencies: [AnyObject] = []
-    private var properties: [String:AnyObject] = [:]
+    private var dependencies: [Any] = []
+    private var properties: [String:Any] = [:]
     private var isActive: Bool = false
     
     public override init() {
@@ -35,8 +39,10 @@ open class Context: NSObject {
     
     open func get(withClass aClass: AnyClass) -> AnyObject? {
         for dependency in dependencies {
-            if dependency.isKind(of: aClass) {
-                return dependency
+            if let dependencyObj = dependency as AnyObject? {
+                if dependencyObj.isKind(of: aClass) {
+                    return dependencyObj
+                }
             }
         }
         return nil
@@ -44,8 +50,10 @@ open class Context: NSObject {
     
     open func get(withProtocol aProtocol: Protocol) -> AnyObject? {
         for dependency in dependencies {
-            if dependency.conforms(to: aProtocol) {
-                return dependency
+            if let dependencyObj = dependency as AnyObject? {
+                if dependencyObj.conforms(to: aProtocol) {
+                    return dependencyObj
+                }
             }
         }
         return nil
@@ -54,8 +62,10 @@ open class Context: NSObject {
     open func getAll(withClass aClass: AnyClass) -> [AnyObject] {
         var result :[AnyObject] = []
         for dependency in dependencies {
-            if dependency.isKind(of: aClass) {
-                result.append(dependency)
+            if let dependencyObj = dependency as AnyObject? {
+                if dependencyObj.isKind(of: aClass) {
+                    result.append(dependencyObj)
+                }
             }
         }
         return result
@@ -68,7 +78,7 @@ open class Context: NSObject {
         return nil
     }
     
-    open func getProperty(key: String) -> AnyObject? {
+    open func getProperty(key: String) -> Any? {
         return properties[key.uppercased()]
     }
     
@@ -82,25 +92,25 @@ open class Context: NSObject {
         resolveDependenciesDependencies()
     }
     
-    open func register(_ object: AnyObject) {
+    open func register(_ object: Any) {
         dependencies.append(object)
         if isActive {
             resolveDependencies(object)
         }
     }
     
-    open func register(objects: [AnyObject]) {
+    open func register(objects: [Any]) {
         dependencies.append(contentsOf: objects)
         if isActive {
             resolveDependencies(objects: objects)
         }
     }
     
-    open func register(property: AnyObject, withKey key: String) {
+    open func register(property: Any, withKey key: String) {
         properties[key.uppercased()] = property
     }
     
-    open func resolveDependencies(objects: [AnyObject]) {
+    open func resolveDependencies(objects: [Any]) {
         for dependent in objects {
             resolveDependencies(dependent)
         }
@@ -112,23 +122,38 @@ open class Context: NSObject {
         return obj
     }
     
-    open func resolveDependencies(_ object: AnyObject) {
-        let allProperties = ClassPropertiesUtil.generate(forClass: object_getClass(object))
+    open func resolveDependencies(_ object: Any) {
+        switch object {
+        case let dependentObj as AnyObject:
+            resolveObjectTypeDependencies(dependentObj)
+        case let dependentProto as Dependent:
+            resolveProtocolDependentDependencies(dependentProto)
+        default:
+            return
+        }
+    }
+    
+    private func resolveProtocolDependentDependencies(_ dependent: Dependent) {
+        dependent.resolveDependencies(context: self)
+    }
+    
+    private func resolveObjectTypeDependencies(_ dependentObj: AnyObject) {
+        let allProperties = ClassPropertiesUtil.generate(forClass: object_getClass(dependentObj))
         
         getDependencyProperties(allProperties).forEach { (aProperty) in
             if !aProperty.isWeak {
                 print("WARNING: dependency property \(aProperty.name) on \(aProperty.sourceClass) not weak!")
             }
-            satisfyDependency(aProperty, forDependent: object)
+            satisfyDependency(aProperty, forDependent: dependentObj)
         }
         getPropertiesProperties(allProperties).forEach { (aProperty) in
-            satisfyProperty(aProperty, forDependent: object)
+            satisfyProperty(aProperty, forDependent: dependentObj)
         }
         getNewInstanceProperties(allProperties).forEach { (aProperty) in
             if aProperty.isWeak {
                 print("ERROR: instance property \(aProperty.name) on \(aProperty.sourceClass) not strong!")
             }
-            satisfyNewInstance(aProperty, forDependent: object)
+            satisfyNewInstance(aProperty, forDependent: dependentObj)
         }
     }
     
@@ -177,7 +202,8 @@ open class Context: NSObject {
                 }
             }
         }
-        print("ERROR: could not satisfy \(aProperty.name) for \(aProperty.sourceClass)")
+        print("FATAL ERROR: could not satisfy \(aProperty.name) for \(aProperty.sourceClass)")
+        //TODO: should through and exception?
     }
     
     private func satisfyProperty(_ aProperty: ClassProperty, forDependent dependent: AnyObject) {

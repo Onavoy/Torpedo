@@ -6,7 +6,7 @@ open class StringUtils {
         if isEmpty(aString) {
             return true
         } else {
-            let trimmed = aString!.trim()
+            let trimmed = aString!.trimmed()
             if trimmed.length == 0 {
                 return true
             }
