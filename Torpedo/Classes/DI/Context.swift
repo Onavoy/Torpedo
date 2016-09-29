@@ -4,18 +4,30 @@ public protocol Dependent: class {
     func resolveDependencies(context: Context)
 }
 
-open class Context: NSObject {
+public enum ConstructionError: Error {
+    case invalidParameters(message: String)
+    case noConstructorFound
+    case notMyJob
+}
+
+public protocol Constructor: class {
+    
+    func construct<T>(type: T.Type, withContext: Context, params: [String:Any]) throws -> T
+    
+}
+
+open class Context {
     
     private var dependencies: [Any] = []
     private var properties: [String:Any] = [:]
     private var isActive: Bool = false
+    private var typeConstructorsMap : [String:Constructor] = [:]
     
-    public override init() {
-        super.init()
+    public init() {
         #if os(iOS)
             UIKitTorpedoContext.configure()
         #endif
-        self.register(property: FileManager.default.urls(for :.documentDirectory, in : .userDomainMask).first! as AnyObject, withKey: "DocumentsDirectory")
+        self.register(property: FileManager.default.urls(for :.documentDirectory, in : .userDomainMask).first!, withKey: "DocumentsDirectory")
     }
     
     open func get<T>(_ type: T.Type) -> T! {
@@ -32,40 +44,6 @@ open class Context: NSObject {
         for obj in dependencies {
             if let objT = obj as? T {
                 result.append(objT)
-            }
-        }
-        return result
-    }
-    
-    open func get(withClass aClass: AnyClass) -> AnyObject? {
-        for dependency in dependencies {
-            if let dependencyObj = dependency as AnyObject? {
-                if dependencyObj.isKind(of: aClass) {
-                    return dependencyObj
-                }
-            }
-        }
-        return nil
-    }
-    
-    open func get(withProtocol aProtocol: Protocol) -> AnyObject? {
-        for dependency in dependencies {
-            if let dependencyObj = dependency as AnyObject? {
-                if dependencyObj.conforms(to: aProtocol) {
-                    return dependencyObj
-                }
-            }
-        }
-        return nil
-    }
-    
-    open func getAll(withClass aClass: AnyClass) -> [AnyObject] {
-        var result :[AnyObject] = []
-        for dependency in dependencies {
-            if let dependencyObj = dependency as AnyObject? {
-                if dependencyObj.isKind(of: aClass) {
-                    result.append(dependencyObj)
-                }
             }
         }
         return result
@@ -110,48 +88,29 @@ open class Context: NSObject {
         properties[key.uppercased()] = property
     }
     
+    open func register<T>(constructor: Constructor, forType type: T.Type) {
+        typeConstructorsMap["\(type)"] = constructor
+        register(constructor)
+    }
+    
     open func resolveDependencies(objects: [Any]) {
         for dependent in objects {
             resolveDependencies(dependent)
         }
     }
     
-    open func instance(of aClass: AnyClass) -> AnyObject {
-        let obj = RuntimeUtils.instance(of: aClass)
-        resolveDependencies(obj)
-        return obj
+    open func instance<T>(ofType type : T.Type, params: [String:Any] = [:]) throws -> T {
+        guard let constructor = findConstructor(type: type) else {
+            throw ConstructionError.noConstructorFound
+        }
+        let instance = try constructor.construct(type: type, withContext: self, params: params)
+        resolveDependencies(instance)
+        return instance
     }
     
     open func resolveDependencies(_ object: Any) {
-        if let asObj = object as? NSObject {
-            resolveObjectTypeDependencies(asObj)
-        }
         if let asProto = object as? Dependent {
-            resolveProtocolDependentDependencies(asProto)
-        }
-    }
-    
-    private func resolveProtocolDependentDependencies(_ dependent: Dependent) {
-        dependent.resolveDependencies(context: self)
-    }
-    
-    private func resolveObjectTypeDependencies(_ dependentObj: AnyObject) {
-        let allProperties = ClassPropertiesUtil.generate(forClass: object_getClass(dependentObj))
-        
-        getDependencyProperties(allProperties).forEach { (aProperty) in
-            if !aProperty.isWeak {
-                print("WARNING: dependency property \(aProperty.name) on \(aProperty.sourceClass) not weak!")
-            }
-            satisfyDependency(aProperty, forDependent: dependentObj)
-        }
-        getPropertiesProperties(allProperties).forEach { (aProperty) in
-            satisfyProperty(aProperty, forDependent: dependentObj)
-        }
-        getNewInstanceProperties(allProperties).forEach { (aProperty) in
-            if aProperty.isWeak {
-                print("ERROR: instance property \(aProperty.name) on \(aProperty.sourceClass) not strong!")
-            }
-            satisfyNewInstance(aProperty, forDependent: dependentObj)
+            asProto.resolveDependencies(context: self)
         }
     }
     
@@ -159,6 +118,7 @@ open class Context: NSObject {
         let cloneContext = Context()
         cloneContext.dependencies = dependencies
         cloneContext.properties = properties
+        cloneContext.typeConstructorsMap = typeConstructorsMap
         return cloneContext
     }
     
@@ -168,54 +128,9 @@ open class Context: NSObject {
         }
     }
     
-    private func getDependencyProperties(_ allProperties: [ClassProperty]) -> [ClassProperty] {
-        return getProperties(allProperties, withPrefix: "d_")
-    }
-    
-    private func getPropertiesProperties(_ allProperties: [ClassProperty]) -> [ClassProperty] {
-        return getProperties(allProperties, withPrefix: "p_")
-    }
-    
-    private func getNewInstanceProperties(_ allProperties: [ClassProperty]) -> [ClassProperty] {
-        return getProperties(allProperties, withPrefix: "n_")
-    }
-    
-    private func getProperties(_ allProperties: [ClassProperty], withPrefix prefix: String) -> [ClassProperty] {
-        return allProperties.filter { (property) -> Bool in
-            return property.name.hasPrefix(prefix)
-        }
-    }
-    
-    private func satisfyDependency(_ aProperty: ClassProperty, forDependent dependent: AnyObject) {
-        if let theClass = aProperty.objectClass {
-            if let dependency = get(withClass: theClass) {
-                dependent.setValue(dependency, forKeyPath: aProperty.name)
-                return
-            }
-        } else if let protocolName = aProperty.protocols?.first {
-            if let theProtocol = NSProtocolFromString(protocolName) {
-                if let theConformer = get(withProtocol: theProtocol) {
-                    dependent.setValue(theConformer, forKeyPath: aProperty.name)
-                    return
-                }
-            }
-        }
-        print("FATAL ERROR: could not satisfy \(aProperty.name) for \(aProperty.sourceClass)")
-        //TODO: should through and exception?
-    }
-    
-    private func satisfyProperty(_ aProperty: ClassProperty, forDependent dependent: AnyObject) {
-        let propertyName = aProperty.name
-        let propertyKey = propertyName.substring(from: propertyName.index(propertyName.startIndex, offsetBy: 2))
-        if let dependency = getProperty(key: propertyKey) {
-            dependent.setValue(dependency, forKeyPath: aProperty.name)
-        } else {
-            print("ERROR: could not satisfy \(aProperty.name) for \(aProperty.sourceClass)")
-        }
-    }
-    
-    private func satisfyNewInstance(_ aProperty: ClassProperty, forDependent dependent: AnyObject) {
-        dependent.setValue(self.instance(of: aProperty.objectClass!), forKeyPath: aProperty.name)
+    private func findConstructor<T>(type: T.Type) -> Constructor? {
+        let key = "\(type)"
+        return typeConstructorsMap[key]
     }
     
 }

@@ -200,7 +200,7 @@
     
     extension UIViewController : Dependent {
         
-        public func resolveDependencies(context: Context) {
+        open func resolveDependencies(context: Context) {
             self.context = context
         }
         
@@ -208,7 +208,7 @@
     
     extension UIStoryboard : Dependent {
         
-        public func resolveDependencies(context: Context) {
+        open func resolveDependencies(context: Context) {
             self.context = context
         }
         
