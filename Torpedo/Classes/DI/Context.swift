@@ -1,4 +1,7 @@
 import Foundation
+#if os(iOS)
+import UIKit
+#endif
 
 public protocol Dependent: class {
     func resolveDependencies(context: Context)
@@ -109,8 +112,15 @@ open class Context {
     }
     
     open func resolveDependencies(_ object: Any) {
-        if let asProto = object as? Dependent {
-            asProto.resolveDependencies(context: self)
+        #if os(iOS)
+            if let viewController = object as? UIViewController {
+                viewController.context = self
+            } else if let storyboard = object as? UIStoryboard {
+                storyboard.context = self
+            }
+        #endif
+        if let dependent = object as? Dependent {
+            dependent.resolveDependencies(context: self)
         }
     }
     

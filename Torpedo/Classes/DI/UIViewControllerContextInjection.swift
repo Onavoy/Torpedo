@@ -198,20 +198,4 @@
         
     }
     
-    extension UIViewController : Dependent {
-        
-        open func resolveDependencies(context: Context) {
-            self.context = context
-        }
-        
-    }
-    
-    extension UIStoryboard : Dependent {
-        
-        open func resolveDependencies(context: Context) {
-            self.context = context
-        }
-        
-    }
-    
 #endif
