@@ -66,7 +66,7 @@
             context_present(viewControllerToPresent, animated: flag, completion: completion)
         }
         
-        public weak var d_context: Context? {
+        public weak var context: Context? {
             get {
                 let existingValue = objc_getAssociatedObject(self, &AssociatedKeys.Context)
                 if let value = existingValue as? Context {
@@ -78,7 +78,7 @@
                 objc_setAssociatedObject(self, &AssociatedKeys.Context, newValue, .OBJC_ASSOCIATION_ASSIGN)
                 if let actualStoryboard = storyboard {
                     if !actualStoryboard.isInjectionComplete {
-                        d_context?.resolveDependencies(actualStoryboard)
+                        context?.resolveDependencies(actualStoryboard)
                         actualStoryboard.isInjectionComplete = true
                     }
                 }
@@ -110,8 +110,8 @@
         }
         
         fileprivate func context_injectPropertiesIfNotYet(_ viewController: UIViewController) {
-            if !viewController.isInjectionComplete && d_context != nil {
-                d_context?.resolveDependencies(viewController)
+            if !viewController.isInjectionComplete && context != nil {
+                context?.resolveDependencies(viewController)
                 let children = viewController.childViewControllers
                 context_injectPropertiesForMany(children)
                 context_injectPropertiesForMany(viewController.carriedChildren())
@@ -141,7 +141,7 @@
         
         func context_instantiateViewController(withIdentifier identifier: String) -> UIViewController {
             let viewController = context_instantiateViewController(withIdentifier: identifier)
-            d_context?.resolveDependencies(viewController)
+            context?.resolveDependencies(viewController)
             return viewController
         }
         
@@ -150,7 +150,7 @@
             static var ContextPropertiesInjected = "d_contextPropertiesInjected"
         }
         
-        public weak var d_context: Context? {
+        public weak var context: Context? {
             get {
                 let existingValue = objc_getAssociatedObject(self, &AssociatedKeys.Context)
                 if let value = existingValue as? Context {
@@ -179,7 +179,7 @@
         
     }
     
-    public extension UINavigationController {
+    extension UINavigationController {
         
         private static var isFinishedSwizzling = false
         
@@ -194,6 +194,22 @@
         func context_pushViewController(_ viewController: UIViewController, animated: Bool) {
             context_injectPropertiesIfNotYet(viewController)
             context_pushViewController(viewController, animated: animated)
+        }
+        
+    }
+    
+    extension UIViewController : Dependent {
+        
+        public func resolveDependencies(context: Context) {
+            self.context = context
+        }
+        
+    }
+    
+    extension UIStoryboard : Dependent {
+        
+        public func resolveDependencies(context: Context) {
+            self.context = context
         }
         
     }

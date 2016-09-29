@@ -123,13 +123,11 @@ open class Context: NSObject {
     }
     
     open func resolveDependencies(_ object: Any) {
-        switch object {
-        case let dependentObj as AnyObject:
-            resolveObjectTypeDependencies(dependentObj)
-        case let dependentProto as Dependent:
-            resolveProtocolDependentDependencies(dependentProto)
-        default:
-            return
+        if let asObj = object as? NSObject {
+            resolveObjectTypeDependencies(asObj)
+        }
+        if let asProto = object as? Dependent {
+            resolveProtocolDependentDependencies(asProto)
         }
     }
     
