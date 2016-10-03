@@ -24,6 +24,7 @@ public extension Date {
         let date = Date.formatter(with: format).date(from: string)
         if date != nil {
             self = date!
+            return
         }
         return nil
     }
