@@ -87,4 +87,9 @@ public class DateUtils {
         return date.addingTimeInterval(TimeInterval(60 * plusMinutes))
     }
     
+    public static func minutesBetween(_ date: Date, and secondDate: Date) -> Int {
+        let intervalBetween = Int(date.timeIntervalSince1970 - secondDate.timeIntervalSince1970)
+        let absoluteInterval = abs(intervalBetween)
+        return absoluteInterval / 60
+    }
 }
