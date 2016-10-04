@@ -4,7 +4,7 @@ public extension Date {
     
     private static var formatsMap: [String : DateFormatter] = [:]
     
-    private var timestamp: Int64 {
+    public var timestamp: Int64 {
         return Int64(timeIntervalSince1970 * 1000.0)
     }
     
