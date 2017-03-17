@@ -4,32 +4,32 @@ public extension Date {
     
     private static var formatsMap: [String : DateFormatter] = [:]
     
-    public var timestamp: Double {
+    public var milliseconds: Double {
         return timeIntervalSince1970 * 1000.0
     }
     
-    public var timestampString : String {
-        return String(timestamp)
+    public var millisecondsString : String {
+        return String(milliseconds)
     }
     
-    public init(timestamp: Double) {
-        self.init(timeIntervalSince1970: timestamp / 1000.0)
+    public init(milliseconds: Double) {
+        self.init(timeIntervalSince1970: milliseconds / 1000.0)
     }
 
-    public init(timestamp: Int64) {
-        self.init(timeIntervalSince1970: Double(timestamp) / 1000.0)
+    public init(milliseconds: Int64) {
+        self.init(timeIntervalSince1970: Double(milliseconds) / 1000.0)
     }
     
-    public init(timestamp: Int32) {
-        self.init(timeIntervalSince1970: Double(timestamp) / 1000.0)
+    public init(milliseconds: Int32) {
+        self.init(timeIntervalSince1970: Double(milliseconds) / 1000.0)
     }
     
-    public init(timestamp: UInt) {
-        self.init(timeIntervalSince1970: Double(timestamp) / 1000.0)
+    public init(milliseconds: UInt) {
+        self.init(timeIntervalSince1970: Double(milliseconds) / 1000.0)
     }
 
-    public init(timestamp: String) {
-        self.init(timeIntervalSince1970: Double(timestamp)! / 1000.0)
+    public init(milliseconds: String) {
+        self.init(timeIntervalSince1970: Double(milliseconds)! / 1000.0)
     }
     
     public init?(string: String, format: String) {

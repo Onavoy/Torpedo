@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B77579B69C3ED353ECB7AFA3 /* FileUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7757B247D184640278E2490 /* FileUtils.swift */; };
 		D53BE2781D9BB669009B3A1F /* DoubleUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53BE2771D9BB669009B3A1F /* DoubleUtils.swift */; };
 		D56662D41D9A305E0037E2CA /* Closures.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56662D31D9A305E0037E2CA /* Closures.swift */; };
 		D587C6AE1D975AB000A7308D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D587C6AD1D975AB000A7308D /* AppDelegate.swift */; };
@@ -37,6 +38,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		B7757B247D184640278E2490 /* FileUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileUtils.swift; sourceTree = "<group>"; };
 		D53BE2771D9BB669009B3A1F /* DoubleUtils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DoubleUtils.swift; sourceTree = "<group>"; };
 		D56662D31D9A305E0037E2CA /* Closures.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Closures.swift; sourceTree = "<group>"; };
 		D587C6AA1D975AB000A7308D /* Torpedo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Torpedo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -79,6 +81,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		B775777A14304C40F304933A /* Files */ = {
+			isa = PBXGroup;
+			children = (
+				B7757B247D184640278E2490 /* FileUtils.swift */,
+			);
+			path = Files;
+			sourceTree = "<group>";
+		};
 		D587C6A11D975AB000A7308D = {
 			isa = PBXGroup;
 			children = (
@@ -120,6 +130,7 @@
 				D587C6D01D975B4200A7308D /* Numbers */,
 				D587C6D21D975B4200A7308D /* Runtime */,
 				D587C6D71D975B4200A7308D /* String */,
+				B775777A14304C40F304933A /* Files */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -298,6 +309,7 @@
 				D587C6E51D975B4200A7308D /* UIViewControllerContextInjection.swift in Sources */,
 				D587C6E01D975B4200A7308D /* BoolSet.swift in Sources */,
 				D587C6E71D975B4200A7308D /* ClassPropertiesUtil.swift in Sources */,
+				B77579B69C3ED353ECB7AFA3 /* FileUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
