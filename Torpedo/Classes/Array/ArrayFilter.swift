@@ -33,6 +33,25 @@ public extension Array {
         return result
     }
     
+    public func chucnked(inPartsOf numberOfPiecesInChunk: Int) -> [[Element]] {
+        var chunks : [[Element]] = []
+        let remainderOfSplits = self.count % numberOfPiecesInChunk
+        let remainderAddition = remainderOfSplits > 0 ? 1 : 0
+        let numberOfChunks = (self.count / numberOfPiecesInChunk) + remainderAddition
+        numberOfChunks.times { (index) in
+            chunks.append(self.safeSubArray(startIndex:
+                index * numberOfPiecesInChunk
+                , finalIndex: ((index + 1) * numberOfPiecesInChunk) - 1))
+        }
+        return chunks
+    }
+    
+    public func safeSubArray(startIndex: Int, finalIndex: Int) -> [Element] {
+        let minusCount = self.count - 1
+        let finalEndIndex = minusCount < finalIndex ? minusCount : finalIndex
+        return Array(self[startIndex...finalEndIndex])
+    }
+    
 }
 
 public extension Array where Element: Equatable {
