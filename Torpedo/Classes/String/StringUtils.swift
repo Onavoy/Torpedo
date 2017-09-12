@@ -47,6 +47,9 @@ open class StringUtils {
         if second == nil && isEmpty(first!) {
             return true
         }
+        if first == nil || second == nil {
+            return false
+        }
         return first!.equals(second!)
     }
 
